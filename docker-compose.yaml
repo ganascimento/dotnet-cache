@@ -1,0 +1,34 @@
+version: "3"
+
+services:
+  api:
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    container_name: cache_app
+    ports:
+      - "5000:80"
+    environment:
+      Redis__ConnectionString: redis:6379
+      Mongo__ConnectionString: mongodb://rootuser:passw0rd7es7e@mongodb:27017
+    depends_on:
+      - redis
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: rootuser
+      MONGO_INITDB_ROOT_PASSWORD: passw0rd7es7e
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+volumes:
+  mongodb_data:
